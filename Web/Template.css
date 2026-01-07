@@ -1,0 +1,15 @@
+body.calendar {
+    display: grid;
+}
+table.grid {
+    border-spacing: 0px;
+}
+th {
+    border: 1px solid #7F7F7F;
+}
+th.columnheader {
+    width: 14.28%;
+}
+img.anime-img {
+    width: 100%;
+}
