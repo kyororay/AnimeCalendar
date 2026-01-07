@@ -68,7 +68,7 @@ namespace GenshinEventChecker
                     {"土", new List<Dictionary<string, string>>() },
                 };
 
-                var blog_cards = WaitPresenceClass(driver, "blog-card");
+                var blog_cards = WaitPresenceClass(driver, "blog-card", 30);
                 foreach (var card in blog_cards)
                 {
                     try
