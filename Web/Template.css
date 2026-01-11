@@ -1,13 +1,20 @@
 body.calendar {
     display: grid;
+    margin: 0px;
+}
+table.rowheader {
+    position: fixed;
+    width: 100%;
+    background: #FFFFFF;
 }
 table.grid {
+    padding-top: 28px;
+}
+table {
     border-spacing: 0px;
 }
 th {
     border: 1px solid #7F7F7F;
-}
-th.columnheader {
     width: 14.28%;
 }
 img.anime-img {
