@@ -85,14 +85,14 @@ namespace GenshinEventChecker
                     "justify-content: center;" +
                     "font-size: 28px;" +
                     "font-weight: bold;" +
-                    "'><span>データ取得中...</span></div>\")", 
-                    WaitPresenceClass(driver, "tag-template-default", 30)[0]
+                    "'><span>データ取得中...</span></div>\")",
+                    driver.FindElement(By.TagName("body"))
                     );
 
                 //MessageBox.Show("確認", "確認", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                 //データ取得
-                var blog_cards = WaitPresenceClass(driver, "blog-card");
+                var blog_cards = WaitPresenceClass(driver, "blog-card", 30);
                 foreach (var card in blog_cards)
                 {
                     try
