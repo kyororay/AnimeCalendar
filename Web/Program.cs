@@ -7,12 +7,13 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using System.Windows.Forms;
+using IniParser;
 using Newtonsoft.Json.Linq;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Support.UI;
 using SeleniumExtras.WaitHelpers;
-using IniParser;
 
 namespace GenshinEventChecker
 {
@@ -68,7 +69,30 @@ namespace GenshinEventChecker
                     {"土", new List<Dictionary<string, string>>() },
                 };
 
-                var blog_cards = WaitPresenceClass(driver, "blog-card", 30);
+                //タイトル変更
+                ((IJavaScriptExecutor)driver).ExecuteScript("document.title = 'AnimeCalendar';");
+
+                //ポップアップ表示
+                ((IJavaScriptExecutor)driver).ExecuteScript(
+                    "arguments[0].insertAdjacentHTML(\"afterbegin\", \"<div style='" +
+                    "background-color: #FFFFFF;" +
+                    "z-index: 111111;" +
+                    "display: flex;" +
+                    "position: fixed;" +
+                    "width: 100%;" +
+                    "height: 100%;" +
+                    "align-items: center;" +
+                    "justify-content: center;" +
+                    "font-size: 28px;" +
+                    "font-weight: bold;" +
+                    "'><span>データ取得中...</span></div>\")", 
+                    WaitPresenceClass(driver, "tag-template-default", 30)[0]
+                    );
+
+                //MessageBox.Show("確認", "確認", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                //データ取得
+                var blog_cards = WaitPresenceClass(driver, "blog-card");
                 foreach (var card in blog_cards)
                 {
                     try
@@ -103,11 +127,6 @@ namespace GenshinEventChecker
                         Console.WriteLine(ex.StackTrace);
                     }
                 }
-
-                /*Console.WriteLine("title: {0}", anime_info["月"][0]["title"]);
-                Console.WriteLine("link: {0}", anime_info["月"][0]["link"]);
-                Console.WriteLine("description: {0}", anime_info["月"][0]["description"]);
-                Console.WriteLine("image: {0}", anime_info["月"][0]["image"]);*/
 
                 driver.Url = Directory.GetCurrentDirectory() + "/Template.html"; //カレンダーテンプレート
                 WaitVisibilityClass(driver, "calendar");
@@ -166,10 +185,6 @@ namespace GenshinEventChecker
             return new WebDriverWait(driver, new TimeSpan(0, 0, timeout)).Until(ExpectedConditions.VisibilityOfAllElementsLocatedBy(By.Id(id_name)));
         }
 
-
-
-
-
         //Class要素存在まで待機
         static ReadOnlyCollection<IWebElement> WaitPresenceClass(IWebDriver driver, string class_name, int timeout = 5)
         {
@@ -181,9 +196,6 @@ namespace GenshinEventChecker
         {
             return new WebDriverWait(driver, new TimeSpan(0, 0, timeout)).Until(ExpectedConditions.PresenceOfAllElementsLocatedBy(By.Id(id_name)));
         }
-
-
-
 
         //Class要素クリック
         static void ClickClass(IWebDriver driver, string class_name, int index = 0, int timeout = 5)
