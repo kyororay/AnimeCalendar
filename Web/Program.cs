@@ -15,7 +15,7 @@ using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Support.UI;
 using SeleniumExtras.WaitHelpers;
 
-namespace GenshinEventChecker
+namespace AnimeCalendar
 {
     class Program
     {
