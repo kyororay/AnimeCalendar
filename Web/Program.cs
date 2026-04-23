@@ -5,11 +5,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Windows.Forms;
 using IniParser;
-using Newtonsoft.Json.Linq;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Support.UI;
@@ -128,25 +125,30 @@ namespace AnimeCalendar
                     }
                 }
 
-                driver.Url = Directory.GetCurrentDirectory() + "/Template.html"; //カレンダーテンプレート
+                //カレンダーテンプレート読み込み
+                driver.Url = Directory.GetCurrentDirectory() + "/Template.html";
                 WaitVisibilityClass(driver, "calendar");
 
                 //カレンダー編集
-                var days = new string[] { "日", "月", "火", "水", "木", "金", "土" };
+                var weeks = anime_info.Keys.ToArray();
+                ((IJavaScriptExecutor)driver).ExecuteScript(
+                    "arguments[0].style.backgroundColor = '#0B57D0'; arguments[0].style.color = '#FFFFFF';",
+                    driver.FindElements(By.ClassName("columnheader"))[(int)DateTime.Now.DayOfWeek]
+                    ); //当該曜日のヘッダーを強調表示
 
-                foreach (var day in days)
+                foreach (var week in weeks)
                 {
-                    for (int i = 0; i < anime_info[day].Count; i++)
+                    for (int i = 0; i < anime_info[week].Count; i++)
                     {
-                        var target_cell = driver.FindElements(By.ClassName("row"))[i].FindElements(By.ClassName("column"))[Array.IndexOf(days, day)];
+                        var target_cell = driver.FindElements(By.ClassName("row"))[i].FindElements(By.ClassName("column"))[Array.IndexOf(weeks, week)];
                         var title = target_cell.FindElement(By.ClassName("anime-title"));
                         var link = target_cell.FindElement(By.ClassName("anime-link"));
                         var image = target_cell.FindElement(By.ClassName("anime-img"));
 
-                        ((IJavaScriptExecutor)driver).ExecuteScript("arguments[0].textContent = arguments[1];", title, anime_info[day][i]["title"]);
-                        ((IJavaScriptExecutor)driver).ExecuteScript("arguments[0].setAttribute('href', arguments[1]);", link, anime_info[day][i]["link"]);
-                        ((IJavaScriptExecutor)driver).ExecuteScript("arguments[0].setAttribute('title', arguments[1]);", image, anime_info[day][i]["description"]);
-                        ((IJavaScriptExecutor)driver).ExecuteScript("arguments[0].setAttribute('src', arguments[1]);", image, anime_info[day][i]["image"]);
+                        ((IJavaScriptExecutor)driver).ExecuteScript("arguments[0].textContent = arguments[1];", title, anime_info[week][i]["title"]);
+                        ((IJavaScriptExecutor)driver).ExecuteScript("arguments[0].setAttribute('href', arguments[1]);", link, anime_info[week][i]["link"]);
+                        ((IJavaScriptExecutor)driver).ExecuteScript("arguments[0].setAttribute('title', arguments[1]);", image, anime_info[week][i]["description"]);
+                        ((IJavaScriptExecutor)driver).ExecuteScript("arguments[0].setAttribute('src', arguments[1]);", image, anime_info[week][i]["image"]);
                     }
                 }
 
